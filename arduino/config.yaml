@@ -1,0 +1,56 @@
+
+scm:
+    type: git
+    repository: https://github.com/mikerr/arduino-oled
+    rev: master
+
+
+buildEvery:
+    #build project every 5 minutes
+    time: "0 */5 * * * *"
+    #but only if there is scm changes
+    withScmChangesOnly: true
+
+
+#Specify environments in which project should be run.
+#That enironments will be satisfied be nodes (see nodes in data/config.yaml).
+#Different options can be passed to different environments.
+# envs:
+#    - name: node:12
+#      options:
+#          publish:
+#              - 9090:9999
+
+#    - name: node:10
+#      options:
+#          publishAll: true
+
+#uncomment to enable notifications
+#notify when build fails or build status changes (according to previous status)
+# notify:
+#     on:
+#         - error
+#         - change
+#     to:
+#         mail:
+#             - your_mail@example.com
+
+steps:
+    - name: add arduin-cli path
+      cmd: >
+           export PATH=$PATH:/opt/arduino-cli/
+
+
+    - name: build
+      cmd: >
+           export PATH=$PATH:/opt/arduino-cli/ ;
+           ls -la ;
+           pwd ;
+           echo "arduino-cli compile -e --clean -v -b esp8266:esp8266:nodemcuv2 Blink_6-6" ;
+           arduino-cli compile -e --clean -v -b esp8266:esp8266:nodemcuv2 Blink_6-6 
+
+    - name: Upload to ESP8266-0
+      cmd: >
+           arduino-cli upload -v -p /dev/esp8266-0  -b esp8266:esp8266:nodemcuv2 Blink_6-6
+
+
