@@ -42,7 +42,7 @@ steps:
            make -f ~/Makefile dependencies
     - name: build
       cmd: >
-           make -f ~/Makefile compile
+           touch workspace.ino ; make -f ~/Makefile compile
     - name: Upload
       cmd: >
            make -f ~/Makefile upload
