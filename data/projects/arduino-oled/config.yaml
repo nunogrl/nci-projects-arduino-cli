@@ -39,19 +39,31 @@ steps:
 
     - name: dependencies
       cmd: >
-           REQUIREDLIBS=$(mktemp /tmp/requiredlibsXXX) ;
-           INSTALLEDLIBS=$(mktemp /tmp/installedlibsXXX) ;
-           echo "${REQUIREDLIBS}" "${INSTALLEDLIBS}" ;
-           echo "Required Libs:";
-           cat "${REQUIREDLIBS}" ;
-           cat Test01/sketch.json | jq -r 'if .libs? then .libs[]|. else "" end' | sed 's/ /_/g' > "${REQUIREDLIBS}" ;
-           arduino-cli lib list | awk '{ print $1 }' | grep -v Name | grep . > "${INSTALLEDLIBS}" ;
-           cat "${REQUIREDLIBS}" | grep -vf "${INSTALLEDLIBS}" | sed 's/_/ /g' | xargs -I{} arduino-cli lib install {} ;
-           rm -v "${REQUIREDLIBS}" "${INSTALLEDLIBS}" ;
+           make -f ~/Makefile dependencies
     - name: build
       cmd: >
-           pwd ;
-           arduino-cli -v compile --build-path ~/builds --fqbn esp8266:esp8266:nodemcuv2 Test01 
+           make -f ~/Makefile compile
+    - name: Upload
+      cmd: >
+           make -f ~/Makefile upload
+
+
+
+    #    - name: dependencies
+    #      cmd: >
+    #           REQUIREDLIBS=$(mktemp /tmp/requiredlibsXXX) ;
+    #           INSTALLEDLIBS=$(mktemp /tmp/installedlibsXXX) ;
+    #           echo "${REQUIREDLIBS}" "${INSTALLEDLIBS}" ;
+    #           echo "Required Libs:";
+    #           cat "${REQUIREDLIBS}" ;
+    #           cat Test01/sketch.json | jq -r 'if .libs? then .libs[]|. else "" end' | sed 's/ /_/g' > "${REQUIREDLIBS}" ;
+    #           arduino-cli lib list | awk '{ print $1 }' | grep -v Name | grep . > "${INSTALLEDLIBS}" ;
+    #           cat "${REQUIREDLIBS}" | grep -vf "${INSTALLEDLIBS}" | sed 's/_/ /g' | xargs -I{} arduino-cli lib install {} ;
+    #           rm -v "${REQUIREDLIBS}" "${INSTALLEDLIBS}" ;
+    #    - name: build
+    #      cmd: >
+    #           pwd ;
+    #           arduino-cli -v compile --build-path ~/builds --fqbn esp8266:esp8266:nodemcuv2 Test01 
 
 #    - name: upload
 #      cmd: >
